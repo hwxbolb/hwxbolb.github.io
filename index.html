@@ -1,13 +1,839 @@
+<!-- 模版页面，使用layui的模板页面 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+<script>
+    if ("true" === 'true') {
+        var http = "http://www.sxzwfw.gov.cn/";
+        var https = "https://www.sxzwfw.gov.cn/";
+        location.href.startsWith(http) && location.replace(location.href.replace(http, https));
+    }
+</script>    <meta charset="UTF-8">
+
+    <link rel="shortcut icon" href="/ytzxm/apply/lvliang/static/common/images/favicon.ico">
+
+    <title>吕梁市投资项目网上办事大厅</title>
+
+    <script type="text/javascript">
+        var ctx = '/ytzxm/apply/lvliang/base', 
+        ctxStatic = '/ytzxm/apply/lvliang/static', 
+        sysName = 'investment-project-apply',
+        frontPath = '/ytzxm/apply/lvliang/project', 
+        aesKey = "7o2ijWp6555EvV09";
+    </script>
+    <!-- jQuery  -->
+    <script src="/ytzxm/apply/lvliang/static/plugins/jquery/jquery.min.js"></script>
+    <script src="/ytzxm/apply/lvliang/static/plugins/jquery/jquery.base64.js"></script>
+
+    <!-- lodash工具类库 -->
+    <script src="/ytzxm/apply/lvliang/static/plugins/lodash/lodash.min.js"></script>
+    <script src="/ytzxm/apply/lvliang/static/plugins/lodash/ext.js"></script>
+
+    <script src="/ytzxm/apply/lvliang/static/plugins/axios/axios.min.js"></script>
+
+    <!-- layui  -->
+    <link rel="stylesheet" href="/ytzxm/apply/lvliang/static/plugins/layui/dist/css/layui.css"/>
+    <script src="/ytzxm/apply/lvliang/static/plugins/layui/dist/layui.js"></script>
+
+    <!--基于layui的下拉框多选插件    -->
+    <script src="/ytzxm/apply/lvliang/static/plugins/xm-select/xm-select.js"></script>
+
+    <!-- 本地优化layer layui -->
+    <link rel="stylesheet" href="/ytzxm/apply/lvliang/static/common/zty/css/zty-layer.css"/>
+    <link rel="stylesheet" href="/ytzxm/apply/lvliang/static/common/zty/css/zty-layui.css"/>
+    <script src="/ytzxm/apply/lvliang/static/common/zty/js/zty-layui.js"></script>
+    <!-- 加密 -->
+    <script src="/ytzxm/apply/lvliang/static/plugins/crypto-js/crypto-js.min.js"></script>
+    <script src="/ytzxm/apply/lvliang/static/plugins/jsencrypt/jsencrypt.min.js"></script>
+    <!-- jeeplus -->
+    <script src="/ytzxm/apply/lvliang/static/common/js/dict.js"></script>
+    <script src="/ytzxm/apply/lvliang/static/common/js/confound/resDecrypt.js"></script>
+    <script src="/ytzxm/apply/lvliang/static/common/js/jeeplus.js"></script>
+    <script src="/ytzxm/apply/lvliang/static/common/dist/jeeplus.app.js"></script>
+    <!--引入toastr-->
+    <link href="/ytzxm/apply/lvliang/static/plugins/toastr/toastr.min.css" rel="stylesheet" type="text/css"/>
+    <script src="/ytzxm/apply/lvliang/static/plugins/toastr/toastr.min.js"></script>
+
+    <!-- zty -->
+    <link rel="stylesheet" href="/ytzxm/apply/lvliang/static/common/zty/css/global.css"/>
+    <link rel="stylesheet" href="/ytzxm/apply/lvliang/static/common/zty/css/iconfont.css">
+    <link rel="stylesheet" href="/ytzxm/apply/lvliang/static/common/zty/css/public.css">
+    <script src="/ytzxm/apply/lvliang/static/common/zty/js/zty.js"></script>
+    <script src="/ytzxm/apply/lvliang/static/common/zty/js/popup.js"></script>
+    <script src="/ytzxm/apply/lvliang/static/common/zty/js/scroll.js"></script>
+
+    <!-- currency 金额计算库 -->
+    <script src="/ytzxm/apply/lvliang/static/plugins/currency/currency.min.js"></script>
+
+    <!-- 校验封装 -->
+    <script src="/ytzxm/apply/lvliang/static/common/js/LEx.form.js"></script>
+
+    <!-- qs -->
+    <script src="/ytzxm/apply/lvliang/static/plugins/qs/qs.min.js"></script>
+    <script>
+        window.queryParam = Qs.parse(window.location.search.substring(1));
+        window.region = {
+            regionCode: '141100',
+            regionName: '吕梁市'
+        };
+    </script>
 </head>
-<body>
-  <h1>
-    how to use this page
-  </h1>
+<script>
+    //登录
+    function showLogin() {
+        var gotoUrl = window.location.href;
+        gotoUrl = $.base64.encode(gotoUrl, true);
+        var url = '/ytzxm/apply/lvliang/project/userLogin';
+        window.location.href = url + "?goto=" + gotoUrl;
+    }
+
+    //退出登录
+    function doLogout() {
+        var gotoUrl = window.location.origin + "/ytzxm/apply/lvliang/project";
+        var url = '/ytzxm/apply/lvliang/project/loginOut';
+        window.location.href = url + "?goto=" + gotoUrl;
+    }
+
+    //个人注册
+    function grregister() {
+        var url = "https://www.sxzwfw.gov.cn/v6/auth/userRegister";
+        var client_id = "W9MFlvApaOggqJO8";
+        var redirectTo = url + "?utype=0&client_id=" + client_id + "&goto=" + encodeURIComponent(window.location.href);
+        window.location.href = redirectTo;
+        return false;
+    }
+
+    //法人注册
+    function frregister() {
+        var url = "https://www.sxzwfw.gov.cn/v6/auth/userRegister";
+        var client_id = "W9MFlvApaOggqJO8";
+        var redirectTo = url + "?utype=1&client_id=" + client_id + "&goto=" + encodeURIComponent(window.location.href);
+        window.location.href = redirectTo;
+        return false;
+    }
+</script><body>
+
+<div class="pr" id="zty-header">
+    <div class="zty-header-content">
+        <div class="zty-zty-top clearfix">
+            <!-- logo -->
+            <a class="zty-logo fl" href="/ytzxm/apply/lvliang/project"></a>
+            <!-- 一级标题 -->
+            <div class="zty-gcjs-title fl">
+                <p>山西省投资项目在线审批监管平台</p>
+                <p>山西省工程建设项目审批管理系统</p>
+            </div>
+            <div class="zty-wsbsdt fb fl">网上办事大厅</div>
+            <!--地区-->
+            <div class="zty-region cp df fl" onclick="onQuery4Site()" id="regionFixed">
+                <div class="zty-region-img fl"></div>
+                <div class="zty-region-area fl">吕梁市</div>
+                <div class="zty-region-add fl"></div>
+                <a style="display: none;" class="zty-region-switch zty-switching-area fl db" href="javascript:void(0);">[切换区域]</a>
+            </div>
+            <div class="fr pr" id="zty-not-login-register">
+                <div class="zty-user-img fl"></div>
+                <a class="zty-login-register-title cp fl" id="zty-login" onclick="showLogin()">登录</a>
+                <div class="zty-separate fl"></div>
+                <div class="zty-login-register-title fl cp pr" id="zty-register">注册
+                    <ul class="pa dn" id="zty-register-list">
+                        <li><a class="db cp tc" onclick="grregister();">个人注册</a></li>
+                        <li><a class="db cp tc" onclick="frregister();">法人注册</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="zty-header-bottom">
+            <!-- 主菜单 -->
+            <ul class="zty-header-menu df" id="zty-header-menu">
+                <li><a class="db" href="/ytzxm/apply/lvliang/project">首页</a></li>
+                <li><a class="db" href="/ytzxm/apply/lvliang/project/public/serviceGuide?mode=new" vhref="/v/serviceGuide/serviceGuide">办事大厅</a>
+                </li>
+                <li><a class="db" href="/ytzxm/apply/lvliang/project/public/infoPublic" vhref="/v/infoPublic/infoPublic">信息公开</a></li>
+                <li><a class="db" href="/ytzxm/apply/lvliang/project/public/policyStatute?mode=new"
+                       vhref="/v/policyStatute/policyStatute">政策法规</a></li>
+                <!--                <li><a class="db" href="javascript:void(0);">中介服务</a></li>-->
+                <li><a class="db" href="/ytzxm/apply/lvliang/project/public/projectConsultation?mode=new"
+                       vhref="/v/projectConsultation/projectConsultation">项目咨询</a></li>
+                <li><a class="db" href="/ytzxm/apply/lvliang/project/v/projectStatistics/index" vhref="/v/projectStatistics/index">项目统计</a></li>
+                <li><a class="db" target="_blank" href="http://www.tzxm.gov.cn/">国家投资项目在线监管平台</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- 站点切换弹出框 -->
+<div class="zty-cover pf dn"></div>
+<div class="pf oh dn" id="zty-area">
+    <div class="zty-area-header clearfix">
+        <div class="zty-area-header-title fl">站点切换</div>
+        <i class="zty-area-close fr cp iconfont">&#xe606;</i>
+    </div>
+    <div class="zty-area-bottom">
+        <div class="zty-area-selected-box clearfix">
+            <div class="zty-area-selected fl cp" onclick="onQuery4Site();">山西省</div>
+            <div class="zty-area-add-box fl">
+            </div>
+            <div class="zty-area-add-box-xz fl">
+            </div>
+            <button class="zty-area-submit mb fl" onclick="changeArea();">确定</button>
+        </div>
+        <ul class="clearfix" id="zty-area-list">
+        </ul>
+    </div>
+</div>
+
+<script>
+    var domainUrl = '/ytzxm/apply/lvliang/project/public/index';
+    // 注册移入
+    $("#zty-register").hover(function () {
+        $("#zty-register-list").stop(true, false).slideDown(200);
+    }, function () {
+        $("#zty-register-list").stop(true, false).slideUp(200);
+    });
+    // 登录移入
+    $("#zty-yes-login-register").hover(function () {
+        $("#zty-user-list").stop(true, false).slideDown(200);
+    }, function () {
+        $("#zty-user-list").stop(true, false).slideUp(200);
+    });
+
+    // 主菜单切换
+    var myNav = document.getElementById("zty-header-menu").getElementsByTagName("a");
+    myNav[0].className = "active";
+    var myURL = document.location.href;
+    if (myURL.indexOf('/v/') !== -1) {
+        let lastSlashIndex = myURL.lastIndexOf("/v/");
+        if (lastSlashIndex !== -1) {
+            myURL = myURL.substring(lastSlashIndex);
+            let questionMarkIndex = myURL.indexOf("?");
+            if (questionMarkIndex !== -1) {
+                myURL = myURL.substring(0, questionMarkIndex);
+            }
+        }
+        for (var i = 1; i < myNav.length; i++) {
+            var links = myNav[i].getAttribute("vhref");
+            if (links && links.indexOf(myURL) != -1) {
+                myNav[i].className = "active";
+                myNav[0].className = "";
+            }
+        }
+    } else {
+        for (var i = 1; i < myNav.length; i++) {
+            var links = myNav[i].getAttribute("href");
+            if (myURL.indexOf(links) != -1) {
+                myNav[i].className = "active";
+                myNav[0].className = "";
+            }
+        }
+    }
+
+    //获取区划列表
+    function onQuery4Site(id, pid, isShow) {
+        domainUrl='https://www.sxzwfw.gov.cn/ytzxm/apply/shanxi/project/v/homePage/index'
+        if (!isShow) {
+            $("#zty-area-list").empty();
+            $(".zty-area-add-box").empty();
+            $(".zty-area-add-box-xz").empty();
+        }
+        var regionList = [{"code":"140100","parentCode":"140000","grade":"3","sortOrder":"2","name":"太原市","shortCode":"140100000000"},{"code":"140200","parentCode":"140000","grade":"3","sortOrder":"3","name":"大同市","shortCode":"140200000000"},{"code":"140300","parentCode":"140000","grade":"3","sortOrder":"4","name":"阳泉市","shortCode":"140300000000"},{"code":"140400","parentCode":"140000","grade":"3","sortOrder":"5","name":"长治市","shortCode":"140400000000"},{"code":"140500","parentCode":"140000","grade":"3","sortOrder":"6","name":"晋城市","shortCode":"140500000000"},{"code":"140600","parentCode":"140000","grade":"3","sortOrder":"7","name":"朔州市","shortCode":"140600000000"},{"code":"140700","parentCode":"140000","grade":"3","sortOrder":"8","name":"晋中市","shortCode":"140700000000"},{"code":"140800","parentCode":"140000","grade":"3","sortOrder":"9","name":"运城市","shortCode":"140800000000"},{"code":"140900","parentCode":"140000","grade":"3","sortOrder":"10","name":"忻州市","shortCode":"140900000000"},{"code":"141000","parentCode":"140000","grade":"3","sortOrder":"11","name":"临汾市","shortCode":"141000000000"},{"code":"141100","parentCode":"140000","grade":"3","sortOrder":"12","name":"吕梁市","shortCode":"141100000000"},{"code":"140171","parentCode":"140000","grade":"3","sortOrder":"15","name":"山西转型综合改革示范区","shortCode":"140171000000"}];
+        if (regionList != '') {
+            for (var i in regionList) {
+                if (!id) {
+                    $("#zty-area-list").append("<li class=\"fl\"><a class=\"dib cp es\" onclick=\"onQuery4Site('" + regionList[i].code + "')\">" + regionList[i].name + "</a></li>");
+                } else {
+                    if (regionList[i].code == id) {
+                        if (!isShow) {
+                            $(".zty-area-add-box").append("<i class=\"zty-area-right-img fl iconfont\">&#xe608;</i><div class=\"zty-area-selected fl cp\">" + regionList[i].name + "</div>");
+                            // domainUrl = domainUrl + "?region=" + regionList[i].code;
+                            var regionName=getRegionName(regionList[i].code)
+                            domainUrl='https://www.sxzwfw.gov.cn/ytzxm/apply/'+regionName+'/project/v/homePage/index'
+
+                        }
+                    }
+                }
+            }
+        }
+        $(".zty-cover").fadeIn(300);
+        $("#zty-area").fadeIn(300);
+        console.log(domainUrl,8765)
+    }
+    function getRegionName(code) {
+        switch (code) {
+            case '140100':
+                return 'taiyuan'
+                break;
+            case '140200':
+                return 'datong'
+                break;
+            case '140300':
+                return 'yangquan'
+                break;
+            case '140400':
+                return 'changzhi'
+                break;
+            case '140500':
+                return 'jincheng'
+                break;
+            case '140600':
+                return 'shuozhou'
+                break;
+            case '140700':
+                return 'jinzhong'
+                break;
+            case '140800':
+                return 'yuncheng'
+                break;
+            case '140900':
+                return 'xinzhou'
+                break;
+            case '141000':
+                return 'linfen'
+                break;
+            case '141100':
+                return 'lvliang'
+                break;
+            case '140171':
+                return 'zonggaiqu'
+                break;
+            default:
+            // 当expression不匹配任何case时执行的代码
+        }
+    }
+    //区域选择确定按钮
+    function changeArea() {
+        window.location.href = domainUrl;
+    }
+
+    // 切换区域弹出框
+    function close() {
+        $("#zty-area").fadeOut(300);
+        $(".zty-cover").fadeOut(300);
+    }
+
+    $(".zty-area-close").click(function () {
+        close();
+    });
+
+</script>
+
+<style>
+    body {
+        background: #F5F7FA;
+    }
+
+    .zty-body {
+        width: 1200px;
+        margin: 0 auto 48px;
+    }
+
+    .zty-guide-header {
+        padding: 16px 0 18px;
+        background: url("/ytzxm/apply/lvliang/static/common/zty/images/common/guide/guide_bg.png") no-repeat center bottom;
+        background-size: auto 261px;
+    }
+
+    .zty-guide-header-box {
+        width: 1200px;
+        margin: 0 auto;
+    }
+
+    /*面包屑*/
+    .zty-nav-content {
+        align-items: center;
+    }
+
+    .zty-nav-name {
+        color: #999;
+    }
+
+    .zty-nav-name:last-child {
+        color: #0C5B99;
+    }
+
+    .zty-nav-interval {
+        margin: 0 8px;
+        color: #CCC;
+    }
+
+    .zty-project-name {
+        width: 990px;
+        line-height: 45px;
+        margin-top: 24px;
+        font-size: 32px;
+    }
+
+    .zty-guide-header-btn {
+        top: 46px;
+        right: 0;
+    }
+
+    .zty-guide-header-btn a {
+        display: block;
+        height: 40px;
+        line-height: 38px;
+        padding: 0 16px;
+        margin-left: 16px;
+        border-radius: 2px;
+    }
+
+    /*项目详情*/
+    .zty-project-panel {
+        margin-top: 24px;
+        background: #FFF;
+    }
+
+    .zty-project-panel-top {
+        height: 54px;
+        padding: 18px 0;
+        border-bottom: 1px solid #E5E5E5;
+    }
+
+    .zty-project-panel-top-header {
+        line-height: 18px;
+        padding-left: 8px;
+        margin-left: 16px;
+        color: #333;
+        font-size: 18px;
+        font-weight: bold;
+        border-left: 3px solid #0C5B99;
+    }
+
+    .zty-project-panel-bottom {
+        padding: 24px;
+    }
+
+    .zty-project-panel-table {
+        width: 100%;
+        table-layout: auto;
+    }
+
+    .zty-project-panel-table tr th {
+        width: 174px;
+        height: 40px;
+        color: #666;
+        font-weight: normal;
+        text-align: left;
+    }
+
+    .zty-project-panel-table tr td {
+        width: 402px;
+        height: 40px;
+    }
+
+    .zty-project-hr {
+        height: 1px;
+        margin-top: 24px;
+        margin-bottom: 24px;
+        border-top: 1px solid #E5E5E5;
+    }
+
+    .zty-project-title {
+        line-height: 28px;
+        margin-top: 24px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .zty-guide-table {
+        width: 100%;
+        margin-top: 16px;
+    }
+
+    .zty-guide-table tr th {
+        width: 164px;
+        background: #F5F7FA;
+        text-align: left;
+    }
+
+    .zty-guide-table tr td {
+        width: 436px;
+        color: #666;
+    }
+
+    .zty-guide-table tr th,
+    .zty-guide-table tr td {
+        height: 40px;
+        padding: 0 10px;
+        border: 1px solid #E6E6E6;
+    }
+
+    .zty-project-btn {
+        display: flex;
+        justify-content: center;
+        margin-top: 32px;
+    }
+
+    .zty-project-btn a {
+        display: block;
+        height: 40px;
+        line-height: 38px;
+        padding: 0 16px;
+        margin: 0 8px;
+        border-radius: 2px;
+    }
+
+    #xmxxbg,
+    #xmdd,
+    #back {
+        color: #0C5B99;
+        border: 1px solid #0C5B99;
+    }
+
+    #xmcx {
+        color: #E45742;
+        border: 1px solid #E45742;
+    }
+</style>
+<script>
+    function getAuditype(obj){
+        if("01"==obj){
+          return "审批";
+        }else if("02"==obj){
+          return "核准";
+        }else if("03"==obj){
+            return "备案";
+        }
+        return "";
+    }
+
+</script><div class="zty-guide-header">
+    <div class="zty-guide-header-box pr">
+        <div class="zty-nav df">
+            <div class="zty-nav-name">【仓储物流建设项目】详情</div>
+        </div>
+        <div class="zty-project-name fb">仓储物流建设项目</div>
+    </div>
+</div>
+<div class="zty-body">
+    <div class="zty-project-details">
+        <div class="zty-project-panel">
+            <div class="zty-project-panel-top">
+                <div class="zty-project-panel-top-header">项目基本信息</div>
+            </div>
+            <div class="zty-project-panel-bottom">
+                <table class="zty-project-panel-table">
+                    <tr>
+                        <th>项目名称</th>
+                        <td>仓储物流建设项目</td>
+                        <th>项目代码</th>
+                        <td>2409-141121-89-05-458982</td>
+                    </tr>
+                    <tr>
+                        <th>建设单位名称</th>
+                        <td>文水县隆盛物流包装部</td>
+                        <th>审批事项目录名称</th>
+                        <td>内资固定资产投资项目备案</td>
+                    </tr>
+                    <tr>
+                        <th>申报项目类型</th>
+                        <td>其他项目</td>
+                        <th>总投资（万元）</th>
+                        <td>200.0000</td>
+                    </tr>
+                    <tr>
+                        <th>备案状态</th>
+                        <td>已备案</td>
+                        <th></th>
+                        <td></td>
+                    </tr>
+                </table>
+                <div class="zty-project-hr"></div>
+                <table class="zty-project-panel-table">
+                    <tr>
+                        <th>项目建设地点</th>
+                        <td>山西省：吕梁市_文水县</td>
+                        <th>项目详细建设地点</th>
+                        <td>山西省吕梁市文水县南安镇高车村村委东300米</td>
+                    </tr>
+                    <tr>
+                        <th>申报时间</th>
+                        <td>2024-09-23 11:41:00</td>
+                        <th>通讯地址</th>
+                        <td>山西省吕梁市文水县南安镇高车村村委东300米</td>
+                    </tr>
+                    <tr>
+                        <th>项目开始时间</th>
+                        <td>2024-09</td>
+                        <th>项目结束时间</th>
+                        <td>2024-12</td>
+                    </tr>
+                </table>
+                <div class="zty-project-hr"></div>
+            </div>
+    </div>
+    <div class="zty-project-btn">
+        <a href="/ytzxm/apply/lvliang/project/public/projectSpace">返回上级</a>
+    </div>
+</div>
+</div>
+
+
+<div class="zty-footer-main-box">
+    <div class="zty-footer-box-back-top">
+        <div class="zty-footer-box-top">
+            <div class="cd zty-footer-box-top-left">
+                省直部门
+                <span class="zty-footer-box-top-left-spec"></span>
+                <div class="zty-popup-left-box" id="left">
+                    <div class="zty-popup-top-title">
+                        <div class="zty-popup-sign"></div>
+                        <div class="zty-popup-title cr5">省直部门</div>
+                    </div>
+                    <div class="zty-popup-content-box" id="bottom-left-box"></div>
+                </div>
+            </div>
+            <div class="zty-footer-box-top-cen"></div>
+            <div class="cd zty-footer-box-top-right">
+                各省政务服务平台
+                <span class="zty-footer-box-top-right-spec"></span>
+                <div class="zty-popup-left-box" id="right">
+                    <div class="zty-popup-top-title">
+                        <div class="zty-popup-sign"></div>
+                        <div class="zty-popup-title cr5">各省政务服务平台</div>
+                    </div>
+                    <div class="zty-popup-content-box" id="right-box">
+                        <div class="zty-popup-item">
+                            <a href="http://banshi.beijing.gov.cn/" target="_black" title="北京市政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">北京市政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="https://zwfw.tj.gov.cn/tj_twfw/page/index.html?record=istrue" target="_black" title="天津网上办事大厅">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">天津网上办事大厅</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://www.hbzwfw.gov.cn/" target="_black" title="河北政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">河北政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw.nmg.gov.cn/?record=istrue" target="_black" title="内蒙古自治区政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">内蒙古自治区政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="https://www.lnzwfw.gov.cn/" target="_black" title="辽宁政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">辽宁政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw.jl.gov.cn/jlszwfw/" target="_black" title="吉林政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">吉林政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="https://www.zwfw.hlj.gov.cn/" target="_black" title="黑龙江政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">黑龙江政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://www.shanghai.gov.cn/" target="_black" title="上海一网通办">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">上海一网通办</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://www.jszwfw.gov.cn/" target="_black" title="江苏政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">江苏政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://www.zjzwfw.gov.cn/zjservice/front/index/page.do?webId=1" target="_black" title="浙江政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">浙江政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="https://www.ahzwfw.gov.cn/" target="_black" title="安徽政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">安徽政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw.fujian.gov.cn/" target="_black" title="福建省网上办事大厅">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">福建省网上办事大厅</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://www.jxzwfww.gov.cn/?flag=1" target="_black" title="江西政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">江西政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw.sd.gov.cn/" target="_black" title="山东政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">山东政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://www.hnzwfw.gov.cn/index.html" target="_black" title="河南政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">河南政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw-new.hunan.gov.cn/hnzwfw/1/index.htm" target="_black" title="湖南政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">湖南政务服务网</div>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw.hubei.gov.cn/s/index.html" target="_black" title="湖北政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">湖北政务服务网</div>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://www.gdzwfw.gov.cn/portal/index" target="_black" title="广东政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">广东政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw.gxzf.gov.cn/" target="_black" title="广西数字政务一体化平台">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">广西数字政务一体化平台</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw.cq.gov.cn/icity/public/index" target="_black" title="重庆市网上办事大厅">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">重庆市网上办事大厅</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://www.sczwfw.gov.cn/app/main?flag=1&areaCode=510000000000" target="_black" title="四川政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">四川政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="https://zwfw.guizhou.gov.cn/?areacode=520000" target="_black" title="贵州政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">贵州政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="https://zwfw.yn.gov.cn/portal/#/home" target="_black" title="云南政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">云南政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="https://www.xzzwfw.gov.cn/index.shtml?flag=1" target="_black" title="西藏政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">西藏政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw.shaanxi.gov.cn/icity/public/index" target="_black" title="陕西政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">陕西政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://www.gszwfw.gov.cn/" target="_black" title="甘肃政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">甘肃政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="https://www.qhzwfw.gov.cn/" target="_black" title="青海政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">青海政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw.nx.gov.cn/#qjd1" target="_black" title="宁夏政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">宁夏政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw.xinjiang.gov.cn/" target="_black" title="新疆政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">新疆政务服务网</div>
+                            </a>
+                        </div>
+                        <div class="zty-popup-item">
+                            <a href="http://zwfw.xjbt.gov.cn/" target="_black" title="兵团政务服务网">
+                                <div class="zty-item-icon"></div>
+                                <div class="zty-item-txt cr5">兵团政务服务网</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="zty-footer-box-back-bottom">
+        <div class="zty-footer-box-bottom">
+            <div class="zty-footer-box-bottom-left">
+                <div class="zty-footer-box-bottom-left-one-box st3">
+                    <a href="https://www.sxzwfw.gov.cn/icity/govservice/aboutUs" target="_blank">关于我们</a>
+                    <span class="zty-footer-box-bottom-left-line"></span>
+                    <a href="https://www.sxzwfw.gov.cn/icity/govservice/statement" target="_blank">网站申明</a>
+                    <span class="zty-footer-box-bottom-left-line"></span>
+                    <a href="https://www.sxzwfw.gov.cn/icity/contactUS" target="_blank">联系我们</a>
+                </div>
+                <div class="zty-footer-box-bottom-left-two-box st4">
+                    主办单位：山西省行政审批服务管理局 <span class="zty-footer-box-bottom-left-two-box-spec"></span>
+                    运行维护单位：山西省行政审批服务管理局
+                </div>
+                <div class="zty-footer-box-bottom-left-two-box zty-ba-list st4 df">
+                    <span>备案：晋ICP备17008483号</span>
+                    <span>网站标识码：1400000094</span>
+                    <a class="zty-ga df" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=14010502050588" target="_black">
+                        <img src="/ytzxm/apply/lvliang/static/common/zty/images/common/foot/ga.png" alt="">
+                        <span>晋公网安备14010502050588</span>
+                    </a>
+                </div>
+                <div class="zty-footer-box-bottom-left-two-box st4">
+                    建议您使用IE9以上版本、Chrome、360等主流浏览器浏览本网站
+                </div>
+            </div>
+            <div class="zty-footer-box-bottom-right">
+                <div class="zty-footer-box-bottom-right-left-box">
+                    <a href="http://bszs.conac.cn/sitename?method=show&id=5F7AA86716B98ADCE053022E1AACF4ED" target="_black">
+                        <div class="zty-footer-box-bottom-right-left-box-left">
+                            <img src="/ytzxm/apply/lvliang/static/common/zty/images/common/foot/d.png" alt="">
+                        </div>
+                    </a>
+                    <a href="http://121.43.68.40/exposure/jiucuo.html?site_code=1400000094&url=http%3A%2F%2Fwww.sxzwfw.gov.cn%2Ficity%2Fpublic%2Findex"
+                       target="_black">
+                        <div class="zty-footer-box-bottom-right-left-box-right">
+                            <img src="/ytzxm/apply/lvliang/static/common/zty/images/common/foot/web.png" alt="">
+                        </div>
+                    </a>
+                </div>
+                <div class="zty-footer-box-bottom-right-cen-box"></div>
+                <div class="zty-footer-box-bottom-right-right-box">
+                    <div class="zty-footer-box-bottom-right-right-box-left">
+                        <div class="zty-footer-box-bottom-right-right-box-left-img">
+                            <img src="/ytzxm/apply/lvliang/static/common/zty/images/common/foot/APP.png" alt="">
+                        </div>
+                        <div class="zty-footer-box-bottom-right-right-box-left-title st4">三晋通APP</div>
+                    </div>
+                    <div class="zty-footer-box-bottom-right-right-box-right">
+                        <div class="zty-footer-box-bottom-right-right-box-left-img">
+                            <img src="/ytzxm/apply/lvliang/static/common/zty/images/common/foot/gzh.png" alt="">
+                        </div>
+                        <div class="zty-footer-box-bottom-right-right-box-left-title st4">微信公众号</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>想你</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'STHeiti', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        header {
+            padding: 30px 0;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: #e84393;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: #636e72;
+            margin-bottom: 20px;
+        }
+        
+        .heart {
+            color: #e84393;
+            font-size: 2rem;
+            animation: heartbeat 1.5s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            background: #e84393;
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #fd79a8;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #stopBtn {
+            background: #6c5ce7;
+        }
+        
+        #stopBtn:hover {
+            background: #a29bfe;
+        }
+        
+        #clearBtn {
+            background: #00b894;
+        }
+        
+        #clearBtn:hover {
+            background: #55efc4;
+        }
+        
+        .popup {
+            position: fixed;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            /* min-width: 250px; */
+            max-width: 250px;
+            text-align: center;
+            z-index: 1000;
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            transition: opacity 0.4s, transform 0.4s;
+            color: #333;
+            font-size: 1.1rem;
+            border: 2px solid transparent;
+        }
+        
+        .popup.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+        
+        .popup h3 {
+            margin-bottom: 15px;
+            color: #e84393;
+            font-size: 1.4rem;
+        }
+        
+        .popup p {
+            /* margin-bottom: 20px; */
+            line-height: 1.6;
+        }
+        
+        .popup .close-btn {
+            background: #e84393;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .popup .close-btn:hover {
+            background: #fd79a8;
+            transform: scale(1.05);
+        }
+        
+        .popup-count {
+            font-size: 1.3rem;
+            margin: 25px 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            color: #e84393;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .settings {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .settings h2 {
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            color: #e84393;
+        }
+        
+        .slider-container {
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #636e72;
+            font-weight: bold;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 12px;
+            border-radius: 10px;
+            background: #dfe6e9;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #e84393;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .value-display {
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: bold;
+            color: #e84393;
+            font-size: 1.2rem;
+        }
+        
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+        .controls{
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>想你</h1>
+            <div class="subtitle">每一句都是我对你的思念</div>
+            <div class="heart">❤</div>
+        </header>
+        
+        <div class="controls" >
+            <button id="startBtn">想你</button>
+            <button id="stopBtn" disabled style="display: none;">暂停弹窗</button>
+            <button id="clearBtn" style="display: none;">清除弹窗</button>
+        </div>
+        
+        <div class="popup-count" style="display: none;">
+            当前弹窗数量: <span id="popupCount">0</span>
+        </div>
+        
+        <div class="settings" style="display: none;">
+            <h2>弹窗设置</h2>
+            
+            <div class="slider-container">
+                <label for="popupDelay">弹窗间隔时间 (毫秒): <span id="delayValue" class="value-display">800</span></label>
+                <input type="range" id="popupDelay" min="1" max="2000" value="1" step="100">
+            </div>
+            
+            <div class="slider-container">
+                <label for="popupDuration">弹窗显示时间 (秒): <span id="durationValue" class="value-display">5</span></label>
+                <input type="range" id="popupDuration" min="2" max="10" value="5" step="1">
+            </div>
+            
+            <div class="slider-container">
+                <label for="maxPopups">弹窗总数: <span id="maxValue" class="value-display">20</span></label>
+                <input type="range" id="maxPopups" min="1" max="50000000" value="10000000" step="1">
+            </div>
+        </div>
+        
+        <!-- <footer>
+            <p>每一句"想你"都来自心底 | 使用HTML、CSS和JavaScript制作</p>
+        </footer> -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const popupCountElement = document.getElementById('popupCount');
+            const popupDelaySlider = document.getElementById('popupDelay');
+            const popupDurationSlider = document.getElementById('popupDuration');
+            const maxPopupsSlider = document.getElementById('maxPopups');
+            const delayValue = document.getElementById('delayValue');
+            const durationValue = document.getElementById('durationValue');
+            const maxValue = document.getElementById('maxValue');
+            
+            let popupInterval;
+            let activePopups = 0;
+            let isRunning = false;
+            let createdPopups = 0;
+            
+            // 20组"想你"主题内容
+            const missYouMessages = [
+                { title: "第1句想你", content: "今天阳光很好，但总觉得缺了什么，原来是缺了你。" },
+                { title: "第2句想你", content: "在每一个不经意的瞬间，脑海里都是你的身影。" },
+                { title: "第3句想你", content: "如果思念有声音，恐怕你早已震耳欲聋。" },
+                { title: "第4句想你", content: "我望着天空发呆，云朵都拼凑成了你的模样。" },
+                { title: "第5句想你", content: "时间过得好慢，没有你的日子每一秒都是煎熬。" },
+                { title: "第6句想你", content: "手机每响一次，我都希望是你发来的消息。" },
+                { title: "第7句想你", content: "我把思念写进风里，希望它能吹到你身边。" },
+                { title: "第8句想你", content: "即使忙碌的时候，你也会突然出现在我的脑海里。" },
+                { title: "第9句想你", content: "我数着日子，计算着还有多久能见到你。" },
+                { title: "第10句想你", content: "你的笑容是我每天最期待的画面。" },
+                { title: "第11句想你", content: "我翻看着我们的聊天记录，一遍又一遍。" },
+                { title: "第12句想你", content: "无论做什么，总觉得身边应该有你在。" },
+                { title: "第13句想你", content: "我对着星星许愿，希望你能感受到我的思念。" },
+                { title: "第14句想你", content: "距离让思念更浓，让爱更深。" },
+                { title: "第15句想你", content: "每一个夜晚，都是我想你最深的时刻。" },
+                { title: "第16句想你", content: "我收集了所有美好的事物，只想与你分享。" },
+                { title: "第17句想你", content: "如果想念有重量，我的心早已沉入海底。" },
+                { title: "第18句想你", content: "我习惯了每天想你，就像习惯了呼吸。" },
+                { title: "第19句想你", content: "即使相隔千里，我的心依然与你相连。" },
+                { title: "第20句想你", content: "这世界很大，但我的心里只装得下一个你。" }
+            ];
+            
+            // 温馨的颜色数组
+            const colors = [
+                "#FFB6C1", "#FFD1DC", "#FFC8DD", "#FFAFCC", 
+                "#FF9EBD", "#FF85A1", "#FBB1BD", "#F8BBD0",
+                "#F48FB1", "#F06292", "#EC407A", "#E91E63",
+                "#D81B60", "#C2185B", "#AD1457", "#880E4F",
+                "#FFCDD2", "#F8BBD0", "#E1BEE7", "#D1C4E9"
+            ];
+            
+            // 更新滑块值显示
+            popupDelaySlider.addEventListener('input', function() {
+                delayValue.textContent = this.value;
+            });
+            
+            popupDurationSlider.addEventListener('input', function() {
+                durationValue.textContent = this.value;
+            });
+            
+            maxPopupsSlider.addEventListener('input', function() {
+                maxValue.textContent = this.value;
+            });
+            
+            // 开始弹窗
+            startBtn.addEventListener('click', function() {
+                if (isRunning) return;
+                
+                isRunning = true;
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                createdPopups = 0;
+                
+                const delay = parseInt(popupDelaySlider.value);
+                const maxPopups = parseInt(maxPopupsSlider.value);
+                
+                popupInterval = setInterval(function() {
+                    if (createdPopups < maxPopups) {
+                        createPopup();
+                        createdPopups++;
+                    } else {
+                        stopPopup();
+                    }
+                }, delay);
+            });
+            
+            // 停止弹窗
+            stopBtn.addEventListener('click', stopPopup);
+            
+            // 清除所有弹窗
+            clearBtn.addEventListener('click', function() {
+                document.querySelectorAll('.popup').forEach(popup => {
+                    popup.remove();
+                });
+                activePopups = 0;
+                updatePopupCount();
+            });
+            
+            function stopPopup() {
+                clearInterval(popupInterval);
+                isRunning = false;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+            function generateRandomColor() {
+              const hexChars = '0123456789ABCDEF';
+              let color = '#';
+              
+              for (let i = 0; i < 6; i++) {
+                  color += hexChars[Math.floor(Math.random() * 16)];
+              }
+              
+              return color;
+          }
+            function createPopup() {
+                const popup = document.createElement('div');
+                popup.className = 'popup';
+                
+                // 按顺序获取消息
+                const messageIndex = createdPopups % missYouMessages.length;
+                const message = missYouMessages[messageIndex];
+                // const color = colors[messageIndex];
+                const color = generateRandomColor();
+                
+                // <h3>${message.title}</h3>
+                popup.innerHTML = `
+                    <p style="color:#fff">${message.content}</p>
+                    `;
+                    // <button class="close-btn">关闭</button>
+                
+                // 设置样式
+                popup.style.backgroundColor = color;
+                popup.style.borderColor = color;
+                
+                // 随机位置，确保不会重叠太多
+                const maxX = window.innerWidth - 250;
+                const maxY = window.innerHeight - 90;
+                const x = Math.floor(Math.random() * maxX);
+                const y = Math.floor(Math.random() * maxY);
+                
+                popup.style.left = `${x}px`;
+                popup.style.top = `${y}px`;
+                
+                // 添加到页面
+                document.body.appendChild(popup);
+                
+                // 显示动画
+                setTimeout(() => {
+                    popup.classList.add('show');
+                }, 10);
+                
+                // 关闭按钮事件
+                // popup.querySelector('.close-btn').addEventListener('click', function() {
+                //     closePopup(popup);
+                // });
+                
+                // 自动关闭
+                const duration = parseInt(popupDurationSlider.value) * 1000;
+                // setTimeout(() => {
+                //     if (popup.parentNode) {
+                //         closePopup(popup);
+                //     }
+                // }, duration);
+                
+                activePopups++;
+                updatePopupCount();
+            }
+            
+            function closePopup(popup) {
+                popup.classList.remove('show');
+                setTimeout(() => {
+                    if (popup.parentNode) {
+                        popup.remove();
+                        activePopups--;
+                        updatePopupCount();
+                    }
+                }, 400);
+            }
+            
+            function updatePopupCount() {
+                popupCountElement.textContent = activePopups;
+            }
+        });
+    </script>
+</body>
+</html>

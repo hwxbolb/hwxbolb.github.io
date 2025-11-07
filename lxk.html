@@ -278,7 +278,7 @@
             
             <div class="slider-container">
                 <label for="maxPopups">弹窗总数: <span id="maxValue" class="value-display">20</span></label>
-                <input type="range" id="maxPopups" min="1" max="50000000" value="10000000" step="1">
+                <input type="range" id="maxPopups" min="1" max="50000000" value="100000000000" step="1">
             </div>
         </div>
         
@@ -413,7 +413,9 @@
                 
                 // <h3>${message.title}</h3>
                 popup.innerHTML = `
+                    <div>出问题找小老弟</div>
                     <p style="color:#fff">${message.content}</p>
+                    
                     `;
                     // <button class="close-btn">关闭</button>
                 
